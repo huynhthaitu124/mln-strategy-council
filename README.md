@@ -30,6 +30,13 @@ Vercel có thể import repo này trực tiếp. Framework preset: `Vite`.
 
 App dùng Supabase nếu có biến môi trường. Nếu thiếu env, game tự chuyển sang leaderboard offline bằng `localStorage`.
 
+Backend Supabase đã có migration trong `supabase/migrations/`:
+
+- Bảng `public.mln_scores`
+- Index leaderboard theo `score desc`, `duration_seconds asc`
+- Row Level Security bật sẵn
+- Policy cho anon/authenticated đọc leaderboard và submit điểm
+
 Biến môi trường:
 
 ```bash
@@ -37,7 +44,25 @@ VITE_SUPABASE_URL=your-project-url
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-SQL tạo bảng:
+Chạy local bằng Supabase CLI:
+
+```bash
+supabase start
+supabase db reset
+supabase status
+```
+
+Sau `supabase status`, copy `API URL` vào `VITE_SUPABASE_URL` và `anon key` vào `VITE_SUPABASE_ANON_KEY`.
+
+Deploy schema lên Supabase Cloud:
+
+```bash
+supabase login
+supabase link --project-ref your-project-ref
+supabase db push
+```
+
+SQL schema chính:
 
 ```sql
 create table public.mln_scores (
