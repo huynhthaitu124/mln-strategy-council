@@ -59,3 +59,19 @@ test('opens leaderboard from the start screen', async ({ page }) => {
   await page.getByRole('button', { name: 'Quay lại nhập tên' }).click();
   await expect(page.getByRole('heading', { name: 'Hội Đồng Thời Kỳ Quá Độ' })).toBeVisible();
 });
+
+test('keeps the active player session after reload', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Tên người chơi').fill('Người chơi lưu session');
+  await page.getByRole('button', { name: /Bắt đầu/ }).click();
+  await page.getByRole('button', { name: /Đã hiểu, bắt đầu chơi/ }).click();
+
+  await page.getByRole('button', { name: /Điều hòa lợi ích xã hội/ }).click();
+  await expect(page.getByText('1/3 chính sách')).toBeVisible();
+
+  await page.reload();
+
+  await expect(page.getByText('Tình huống 1/6')).toBeVisible();
+  await expect(page.getByText('1/3 chính sách')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Điều hòa lợi ích xã hội/ })).toHaveClass(/selected/);
+});

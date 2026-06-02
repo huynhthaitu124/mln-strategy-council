@@ -20,6 +20,56 @@ import './styles.css';
 type Screen = 'start' | 'game' | 'result' | 'complete' | 'leaderboard';
 
 const statKeys: StatKey[] = ['production', 'livelihood', 'technology', 'solidarity'];
+const sessionStorageKey = 'mln-strategy-session-v1';
+
+type SavedGameSession = {
+  playerName: string;
+  levelIndex: number;
+  selectedCards: PolicyCardId[];
+  totalScore: number;
+  startedAt: number;
+};
+
+function isPolicyCardId(value: string): value is PolicyCardId {
+  return value in policyCards;
+}
+
+function readSavedGameSession(): SavedGameSession | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const raw = window.localStorage.getItem(sessionStorageKey);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw) as Partial<SavedGameSession>;
+    const levelIndex = Number(parsed.levelIndex);
+    if (!Number.isInteger(levelIndex) || levelIndex < 0 || levelIndex >= levels.length) return null;
+
+    const selectedCards = Array.isArray(parsed.selectedCards)
+      ? parsed.selectedCards.filter((id): id is PolicyCardId => typeof id === 'string' && isPolicyCardId(id))
+      : [];
+
+    return {
+      playerName: typeof parsed.playerName === 'string' ? parsed.playerName : '',
+      levelIndex,
+      selectedCards,
+      totalScore: typeof parsed.totalScore === 'number' ? parsed.totalScore : 0,
+      startedAt: typeof parsed.startedAt === 'number' ? parsed.startedAt : Date.now(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function writeSavedGameSession(session: SavedGameSession) {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(sessionStorageKey, JSON.stringify(session));
+}
+
+function clearSavedGameSession() {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(sessionStorageKey);
+}
 
 function formatDuration(seconds: number) {
   const minutes = Math.floor(seconds / 60);
@@ -451,13 +501,14 @@ function LeaderboardScreen({
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('start');
-  const [playerName, setPlayerName] = useState('');
-  const [levelIndex, setLevelIndex] = useState(0);
-  const [selectedCards, setSelectedCards] = useState<PolicyCardId[]>([]);
+  const initialSession = useMemo(() => readSavedGameSession(), []);
+  const [screen, setScreen] = useState<Screen>(initialSession ? 'game' : 'start');
+  const [playerName, setPlayerName] = useState(initialSession?.playerName ?? '');
+  const [levelIndex, setLevelIndex] = useState(initialSession?.levelIndex ?? 0);
+  const [selectedCards, setSelectedCards] = useState<PolicyCardId[]>(initialSession?.selectedCards ?? []);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
-  const [totalScore, setTotalScore] = useState(0);
-  const [startedAt, setStartedAt] = useState(Date.now());
+  const [totalScore, setTotalScore] = useState(initialSession?.totalScore ?? 0);
+  const [startedAt, setStartedAt] = useState(initialSession?.startedAt ?? Date.now());
   const [duration, setDuration] = useState(0);
   const [leaderboard, setLeaderboard] = useState<LeaderboardState>({ entries: [], mode: 'offline' });
   const [submitted, setSubmitted] = useState(false);
@@ -468,6 +519,18 @@ export default function App() {
   useEffect(() => {
     void fetchLeaderboard().then(setLeaderboard);
   }, []);
+
+  useEffect(() => {
+    if (screen !== 'game' && screen !== 'result') return;
+
+    writeSavedGameSession({
+      playerName,
+      levelIndex,
+      selectedCards,
+      totalScore,
+      startedAt,
+    });
+  }, [levelIndex, playerName, screen, selectedCards, startedAt, totalScore]);
 
   function startGame() {
     setStartedAt(Date.now());
@@ -507,6 +570,7 @@ export default function App() {
       const finalDuration = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
       setDuration(finalDuration);
       setScreen('complete');
+      clearSavedGameSession();
       if (!submitted) {
         setSubmitted(true);
         const state = await submitScore({
