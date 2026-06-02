@@ -24,6 +24,8 @@ test('self-plays the council strategy game', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Hội Đồng Thời Kỳ Quá Độ' })).toBeVisible();
   await page.getByLabel('Tên người chơi').fill('Codex Selfplay');
   await page.getByRole('button', { name: /Bắt đầu/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Điều hành hội đồng chiến lược' })).toBeVisible();
+  await page.getByRole('button', { name: /Đã hiểu, bắt đầu chơi/ }).click();
 
   for (let index = 0; index < picksByLevel.length; index += 1) {
     await expect(page.getByText(`Tình huống ${index + 1}/6`)).toBeVisible();

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, CheckCircle2, Play, RotateCcw, Trophy } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, HelpCircle, Play, RotateCcw, Trophy, X } from 'lucide-react';
 import {
   type Level,
   type Outcome,
@@ -267,6 +267,58 @@ function PolicyHand({
   );
 }
 
+function HowToPlayModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="modal-backdrop" role="presentation">
+      <section className="how-to-modal" role="dialog" aria-modal="true" aria-labelledby="how-to-title">
+        <button className="icon-button modal-close" type="button" onClick={onClose} aria-label="Đóng hướng dẫn">
+          <X size={20} />
+        </button>
+        <div className="modal-header">
+          <p className="panel-label">Hướng dẫn chơi</p>
+          <h2 id="how-to-title">Điều hành hội đồng chiến lược</h2>
+          <p>
+            Mục tiêu của bạn là chọn đúng chính sách cho từng giai đoạn lịch sử để giữ vững liên minh
+            công nhân - nông dân - trí thức trong thời kỳ quá độ.
+          </p>
+        </div>
+        <div className="how-to-grid">
+          <article>
+            <b>1. Đọc tình huống</b>
+            <span>Mỗi level có khủng hoảng riêng, căn cứ lịch sử/lý luận và nhiệm vụ chiến lược.</span>
+          </article>
+          <article>
+            <b>2. Quan sát 4 lực lượng</b>
+            <span>Mỗi đại diện cho một chỉ số: sản xuất, đời sống, khoa học - công nghệ, đoàn kết xã hội.</span>
+          </article>
+          <article>
+            <b>3. Chọn chính sách</b>
+            <span>Mỗi chính sách tốn ngân sách. Chọn quá lệch hoặc sai thời kỳ sẽ hụt mục tiêu.</span>
+          </article>
+          <article>
+            <b>4. Tìm cộng hưởng</b>
+            <span>Một số cặp chính sách tạo combo mạnh, ví dụ đào tạo nghề đi cùng công nghiệp hỗ trợ.</span>
+          </article>
+          <article>
+            <b>5. Biểu quyết</b>
+            <span>Khi đủ tự tin, bấm biểu quyết. Nếu chưa đạt, bạn có thể thử lại level đó.</span>
+          </article>
+          <article>
+            <b>6. Hoàn thành 6 level</b>
+            <span>Điểm cuối cùng được gửi lên bảng xếp hạng sau khi vượt qua toàn bộ chuỗi khủng hoảng.</span>
+          </article>
+        </div>
+        <div className="modal-actions">
+          <button className="primary-button" type="button" onClick={onClose}>
+            <Play size={18} />
+            Đã hiểu, bắt đầu chơi
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function ResultScreen({
   level,
   outcome,
@@ -374,6 +426,7 @@ export default function App() {
   const [duration, setDuration] = useState(0);
   const [leaderboard, setLeaderboard] = useState<LeaderboardState>({ entries: [], mode: 'offline' });
   const [submitted, setSubmitted] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const level = levels[levelIndex];
   const preview = useMemo(() => calculateOutcome(level, selectedCards), [level, selectedCards]);
 
@@ -388,6 +441,7 @@ export default function App() {
     setOutcome(null);
     setTotalScore(0);
     setSubmitted(false);
+    setShowGuide(true);
     setScreen('game');
   }
 
@@ -465,10 +519,16 @@ export default function App() {
             <b>Chọn tối đa {level.maxCards} chính sách</b>
             <span>Điểm sẽ chỉ tính khi nghị quyết đạt đủ ngưỡng và điều kiện nhiệm vụ.</span>
           </div>
-          <button className="primary-button" onClick={resolveLevel} disabled={selectedCards.length === 0}>
-            <Play size={20} />
-            Biểu quyết nghị quyết
-          </button>
+          <div className="action-buttons">
+            <button className="secondary-button" type="button" onClick={() => setShowGuide(true)}>
+              <HelpCircle size={18} />
+              Hướng dẫn
+            </button>
+            <button className="primary-button" onClick={resolveLevel} disabled={selectedCards.length === 0}>
+              <Play size={20} />
+              Biểu quyết nghị quyết
+            </button>
+          </div>
         </div>
         <section className="bottom-panels">
           <LevelBrief level={level} />
@@ -479,6 +539,7 @@ export default function App() {
           />
         </section>
       </section>
+      {showGuide && <HowToPlayModal onClose={() => setShowGuide(false)} />}
     </main>
   );
 }

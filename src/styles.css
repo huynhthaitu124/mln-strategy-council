@@ -152,6 +152,17 @@ input:focus {
   border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  color: #f3efe3;
+  background: rgba(5, 9, 7, 0.72);
+}
+
 .app-shell {
   display: flex;
   flex-direction: column;
@@ -549,6 +560,88 @@ input:focus {
   color: #b8b0a4;
 }
 
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(3, 6, 5, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.how-to-modal {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  width: min(900px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border: 1px solid rgba(215, 169, 54, 0.36);
+  border-radius: 8px;
+  padding: 28px;
+  background:
+    linear-gradient(135deg, rgba(215, 169, 54, 0.16), transparent 42%),
+    rgba(18, 25, 21, 0.98);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.modal-header {
+  display: grid;
+  gap: 12px;
+  padding-right: 52px;
+}
+
+.modal-header p:not(.panel-label) {
+  max-width: 740px;
+  color: #c7c1b5;
+  line-height: 1.6;
+}
+
+.how-to-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.how-to-grid article {
+  display: grid;
+  gap: 8px;
+  min-height: 112px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(5, 9, 7, 0.62);
+}
+
+.how-to-grid b {
+  color: #fff8e9;
+}
+
+.how-to-grid span {
+  color: #c7c1b5;
+  line-height: 1.48;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .result-screen,
 .complete-screen {
   width: min(1120px, calc(100% - 32px));
@@ -706,6 +799,20 @@ input:focus {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .action-buttons,
+  .modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .how-to-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .how-to-modal {
+    padding: 22px;
   }
 
   .council-room {
