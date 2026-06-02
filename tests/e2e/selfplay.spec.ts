@@ -1,21 +1,21 @@
 import { expect, test } from '@playwright/test';
 
 const picksByLevel = [
-  ['Điều hòa lợi ích xã hội', 'Khoán sản xuất - hợp tác xã mới', 'Đào tạo nghề - trí thức hóa công nhân'],
+  ['Công nghiệp hỗ trợ - hạ tầng sản xuất', 'Đào tạo nghề - trí thức hóa công nhân', 'Minh bạch và chống lợi ích nhóm'],
   ['Khoán sản xuất - hợp tác xã mới', 'Nông nghiệp số - chuỗi giá trị', 'Điều hòa lợi ích xã hội'],
   ['Công nghiệp hỗ trợ - hạ tầng sản xuất', 'Đào tạo nghề - trí thức hóa công nhân', 'Điều hòa lợi ích xã hội'],
-  ['An sinh - nhà ở - phúc lợi lao động', 'Điều hòa lợi ích xã hội', 'Khoán sản xuất - hợp tác xã mới'],
+  ['An sinh - nhà ở - phúc lợi lao động', 'Bảo vệ lao động và tiền lương', 'Điều hòa lợi ích xã hội'],
   [
     'Dự phòng chuỗi cung ứng chiến lược',
-    'Điều hòa lợi ích xã hội',
-    'Nông nghiệp số - chuỗi giá trị',
+    'Liên kết vùng và logistics',
     'Đào tạo nghề - trí thức hóa công nhân',
+    'Điều hòa lợi ích xã hội',
   ],
   [
     'Nông nghiệp số - chuỗi giá trị',
     'Đào tạo nghề - trí thức hóa công nhân',
+    'Đặt hàng nghiên cứu ứng dụng',
     'An sinh - nhà ở - phúc lợi lao động',
-    'Điều hòa lợi ích xã hội',
   ],
 ];
 
