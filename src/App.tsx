@@ -17,7 +17,7 @@ import {
 import { type LeaderboardState, fetchLeaderboard, submitScore } from './leaderboard';
 import './styles.css';
 
-type Screen = 'start' | 'game' | 'result' | 'complete';
+type Screen = 'start' | 'game' | 'result' | 'complete' | 'leaderboard';
 
 const statKeys: StatKey[] = ['production', 'livelihood', 'technology', 'solidarity'];
 
@@ -31,10 +31,12 @@ function StartScreen({
   playerName,
   setPlayerName,
   onStart,
+  onOpenLeaderboard,
 }: {
   playerName: string;
   setPlayerName: (value: string) => void;
   onStart: () => void;
+  onOpenLeaderboard: () => void;
 }) {
   return (
     <section className="start-screen">
@@ -60,6 +62,10 @@ function StartScreen({
             Bắt đầu
           </button>
         </div>
+        <button className="secondary-button start-leaderboard-button" type="button" onClick={onOpenLeaderboard}>
+          <Trophy size={20} />
+          Xem bảng xếp hạng
+        </button>
       </div>
     </section>
   );
@@ -370,6 +376,31 @@ function ResultScreen({
   );
 }
 
+function LeaderboardPanel({ leaderboard }: { leaderboard: LeaderboardState }) {
+  return (
+    <div className="leaderboard">
+      <div className="panel-title-row">
+        <div>
+          <p className="panel-label">Bảng xếp hạng</p>
+          <h3>{leaderboard.mode === 'online' ? 'Online leaderboard' : 'Offline leaderboard'}</h3>
+        </div>
+      </div>
+      {leaderboard.entries.length === 0 ? (
+        <p>Chưa có điểm nào được ghi nhận.</p>
+      ) : (
+        leaderboard.entries.map((entry, index) => (
+          <article className="score-row" key={`${entry.player_name}-${entry.score}-${index}`}>
+            <b>{index + 1}</b>
+            <span>{entry.player_name}</span>
+            <strong>{entry.score}</strong>
+            <small>{formatDuration(entry.duration_seconds)}</small>
+          </article>
+        ))
+      )}
+    </div>
+  );
+}
+
 function CompleteScreen({
   score,
   duration,
@@ -391,26 +422,30 @@ function CompleteScreen({
           {playerName} · Hoàn thành trong {formatDuration(duration)}
         </span>
       </div>
-      <div className="leaderboard">
-        <div className="panel-title-row">
-          <div>
-            <p className="panel-label">Bảng xếp hạng</p>
-            <h3>{leaderboard.mode === 'online' ? 'Online leaderboard' : 'Offline leaderboard'}</h3>
-          </div>
-        </div>
-        {leaderboard.entries.length === 0 ? (
-          <p>Chưa có điểm nào được ghi nhận.</p>
-        ) : (
-          leaderboard.entries.map((entry, index) => (
-            <article className="score-row" key={`${entry.player_name}-${entry.score}-${index}`}>
-              <b>{index + 1}</b>
-              <span>{entry.player_name}</span>
-              <strong>{entry.score}</strong>
-              <small>{formatDuration(entry.duration_seconds)}</small>
-            </article>
-          ))
-        )}
+      <LeaderboardPanel leaderboard={leaderboard} />
+    </section>
+  );
+}
+
+function LeaderboardScreen({
+  leaderboard,
+  onBack,
+}: {
+  leaderboard: LeaderboardState;
+  onBack: () => void;
+}) {
+  return (
+    <section className="leaderboard-screen">
+      <div className="leaderboard-hero">
+        <Trophy size={34} />
+        <p className="panel-label">Bảng xếp hạng</p>
+        <h1>Những nhà quản lý chiến lược xuất sắc</h1>
+        <span>Điểm được sắp theo tổng điểm cao nhất, nếu bằng điểm thì thời gian hoàn thành nhanh hơn đứng trước.</span>
+        <button className="secondary-button" type="button" onClick={onBack}>
+          Quay lại nhập tên
+        </button>
       </div>
+      <LeaderboardPanel leaderboard={leaderboard} />
     </section>
   );
 }
@@ -443,6 +478,10 @@ export default function App() {
     setSubmitted(false);
     setShowGuide(true);
     setScreen('game');
+  }
+
+  function openLeaderboard() {
+    setScreen('leaderboard');
   }
 
   function resolveLevel() {
@@ -486,7 +525,18 @@ export default function App() {
   }
 
   if (screen === 'start') {
-    return <StartScreen playerName={playerName} setPlayerName={setPlayerName} onStart={startGame} />;
+    return (
+      <StartScreen
+        playerName={playerName}
+        setPlayerName={setPlayerName}
+        onStart={startGame}
+        onOpenLeaderboard={openLeaderboard}
+      />
+    );
+  }
+
+  if (screen === 'leaderboard') {
+    return <LeaderboardScreen leaderboard={leaderboard} onBack={() => setScreen('start')} />;
   }
 
   if (screen === 'result' && outcome) {

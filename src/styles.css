@@ -114,6 +114,10 @@ h3 {
   max-width: 560px;
 }
 
+.start-leaderboard-button {
+  align-self: flex-start;
+}
+
 input {
   width: 100%;
   border: 1px solid rgba(243, 239, 227, 0.22);
@@ -701,18 +705,21 @@ input:focus {
   gap: 12px;
 }
 
-.complete-screen {
+.complete-screen,
+.leaderboard-screen {
   display: grid;
   grid-template-columns: minmax(300px, 0.8fr) minmax(360px, 1fr);
   gap: 18px;
 }
 
 .complete-hero,
+.leaderboard-hero,
 .leaderboard {
   padding: 24px;
 }
 
-.complete-hero {
+.complete-hero,
+.leaderboard-hero {
   display: grid;
   place-items: center;
   align-content: center;
@@ -720,7 +727,8 @@ input:focus {
   text-align: center;
 }
 
-.complete-hero svg {
+.complete-hero svg,
+.leaderboard-hero svg {
   color: #d7a936;
 }
 
@@ -738,6 +746,27 @@ input:focus {
 
 .complete-hero span {
   color: #c7c1b5;
+}
+
+.leaderboard-screen {
+  min-height: 100vh;
+  padding: 32px;
+}
+
+.leaderboard-hero {
+  gap: 12px;
+}
+
+.leaderboard-hero h1 {
+  max-width: 680px;
+  font-size: clamp(2rem, 4vw, 4.1rem);
+  text-align: center;
+}
+
+.leaderboard-hero span {
+  max-width: 560px;
+  color: #c7c1b5;
+  line-height: 1.6;
 }
 
 .score-row {
@@ -763,7 +792,8 @@ input:focus {
 
 @media (max-width: 1180px) {
   .bottom-panels,
-  .complete-screen {
+  .complete-screen,
+  .leaderboard-screen {
     grid-template-columns: 1fr;
   }
 
@@ -799,6 +829,10 @@ input:focus {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .start-leaderboard-button {
+    align-self: stretch;
   }
 
   .action-buttons,
