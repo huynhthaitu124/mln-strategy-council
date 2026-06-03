@@ -54,7 +54,7 @@ test('opens leaderboard from the start screen', async ({ page }) => {
   await page.getByRole('button', { name: /Xem bảng xếp hạng/ }).click();
 
   await expect(page.getByRole('heading', { name: 'Những nhà quản lý chiến lược xuất sắc' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /leaderboard/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Thành tích cao nhất' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Quay lại nhập tên' }).click();
   await expect(page.getByRole('heading', { name: 'Hội Đồng Thời Kỳ Quá Độ' })).toBeVisible();

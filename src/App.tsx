@@ -432,7 +432,7 @@ function LeaderboardPanel({ leaderboard }: { leaderboard: LeaderboardState }) {
       <div className="panel-title-row">
         <div>
           <p className="panel-label">Bảng xếp hạng</p>
-          <h3>{leaderboard.mode === 'online' ? 'Online leaderboard' : 'Offline leaderboard'}</h3>
+          <h3>Thành tích cao nhất</h3>
         </div>
       </div>
       {leaderboard.entries.length === 0 ? (
