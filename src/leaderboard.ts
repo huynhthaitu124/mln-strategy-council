@@ -52,7 +52,8 @@ export async function fetchLeaderboard(): Promise<LeaderboardState> {
     .limit(10);
 
   if (error) {
-    return { entries: sortEntries(readOfflineScores()), mode: 'offline' };
+    console.error('Could not fetch online leaderboard', error);
+    return { entries: [], mode: 'online' };
   }
 
   return { entries: data ?? [], mode: 'online' };
@@ -72,9 +73,8 @@ export async function submitScore(entry: ScoreEntry): Promise<LeaderboardState> 
 
   const { error } = await supabase.from(tableName).insert(entry);
   if (error) {
-    const entries = sortEntries([...readOfflineScores(), entryWithDate]);
-    writeOfflineScores(entries);
-    return { entries, mode: 'offline' };
+    console.error('Could not submit online leaderboard score', error);
+    return fetchLeaderboard();
   }
 
   return fetchLeaderboard();
