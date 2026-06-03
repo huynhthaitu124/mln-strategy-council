@@ -79,3 +79,26 @@ export async function submitScore(entry: ScoreEntry): Promise<LeaderboardState> 
 
   return fetchLeaderboard();
 }
+
+export function subscribeLeaderboard(onChange: (state: LeaderboardState) => void) {
+  if (!supabase) return () => {};
+
+  const channel = supabase
+    .channel('mln-scores-leaderboard')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: tableName,
+      },
+      () => {
+        void fetchLeaderboard().then(onChange);
+      },
+    )
+    .subscribe();
+
+  return () => {
+    void supabase.removeChannel(channel);
+  };
+}

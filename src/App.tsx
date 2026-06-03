@@ -14,7 +14,7 @@ import {
   statLabels,
   toggleCard,
 } from './gameLogic';
-import { type LeaderboardState, fetchLeaderboard, submitScore } from './leaderboard';
+import { type LeaderboardState, fetchLeaderboard, submitScore, subscribeLeaderboard } from './leaderboard';
 import './styles.css';
 
 type Screen = 'start' | 'game' | 'result' | 'complete' | 'leaderboard';
@@ -518,6 +518,7 @@ export default function App() {
 
   useEffect(() => {
     void fetchLeaderboard().then(setLeaderboard);
+    return subscribeLeaderboard(setLeaderboard);
   }, []);
 
   useEffect(() => {
