@@ -700,8 +700,7 @@ export function calculateOutcome(level: Level, selected: PolicyCardId[]): Outcom
   const matchedRoute = getMatchedRoute(level, selectedSet);
   const requiredAllMet = !level.requiredAll || level.requiredAll.every((id) => selectedSet.has(id));
   const requiredAnyMet = !level.requiredAny || level.requiredAny.some((id) => selectedSet.has(id));
-  const routeMet = !level.strategyRoutes?.length || Boolean(matchedRoute);
-  const objectiveMet = requiredAllMet && requiredAnyMet && routeMet && spentBudget <= level.budget;
+  const objectiveMet = requiredAllMet && requiredAnyMet && spentBudget <= level.budget;
   const passed = failedStats.length === 0 && objectiveMet;
   const avgStats = statKeys.reduce((sum, key) => sum + stats[key], 0) / statKeys.length;
   const remainingBudget = Math.max(0, level.budget - spentBudget);
@@ -767,7 +766,7 @@ export function getRequiredText(level: Level) {
   const parts: string[] = [];
   if (level.strategyRoutes?.length) {
     parts.push(
-      `Chọn một đường lối: ${level.strategyRoutes
+      `Đường lối cộng điểm: ${level.strategyRoutes
         .map((route) => `${route.name} (+${route.bonus})`)
         .join(' / ')}`,
     );

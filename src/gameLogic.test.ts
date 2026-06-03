@@ -32,8 +32,8 @@ describe('council strategy logic', () => {
     const outcome = calculateOutcome(levels[1], ['coordination', 'tax-cut']);
 
     expect(outcome.passed).toBe(false);
-    expect(outcome.objectiveMet).toBe(false);
-    expect(getRequiredText(levels[1]).join(' ')).toContain('Chọn một đường lối');
+    expect(outcome.failedStats.length).toBeGreaterThan(0);
+    expect(getRequiredText(levels[1]).join(' ')).toContain('Đường lối cộng điểm');
     expect(getRequiredText(levels[1]).join(' ')).toContain('Kỹ thuật hóa nông nghiệp');
   });
 
@@ -113,6 +113,19 @@ describe('council strategy logic', () => {
     expect(techRoute.passed).toBe(true);
     expect(new Set([safeRoute.score, marketRoute.score, techRoute.score]).size).toBe(3);
     expect(techRoute.score).toBeGreaterThan(safeRoute.score);
+  });
+
+  it('passes an off-route strategy when national stats meet the objectives', () => {
+    const outcome = calculateOutcome(levels[4], [
+      'import-buffer',
+      'coordination',
+      'digital-agri',
+      'technical-training',
+    ]);
+
+    expect(outcome.strategyRoute).toBeUndefined();
+    expect(outcome.failedStats).toEqual([]);
+    expect(outcome.passed).toBe(true);
   });
 
   it('keeps every advertised strategic route playable with non-identical scores', () => {
